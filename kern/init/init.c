@@ -11,6 +11,7 @@ void kern_init(void) {
     cons_init(); // init the console
     printf("Hello, World!\n");
     printf("edata=%p, end=%p, end-edata=%p\n", edata, end, end - edata);
+    printf("edata=%lld, end=%lld, end-edata=%lld\n", edata, end, end - edata);
 
     while (1)
         /* do nothing */;

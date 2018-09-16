@@ -73,14 +73,15 @@ getuint(va_list *ap, int lflag) {
  * @ap:            a varargs list pointer
  * @lflag:        determines the size of the vararg that @ap points to
  * */
+// AMD64的va_list实现有所变化，从指针变成了数组，因此直接传参即可，无需传地址
 static long long
-getint(va_list *ap, int lflag) {
+getint(va_list ap, int lflag) {
     if (lflag >= 2) {
-        return va_arg(*ap, long long);
+        return va_arg(ap, long long);
     } else if (lflag) {
-        return va_arg(*ap, long);
+        return va_arg(ap, long);
     } else {
-        return va_arg(*ap, int);
+        return va_arg(ap, int);
     }
 }
 
@@ -217,7 +218,7 @@ void vprintfmt(void (*putch)(int, void *), void *putdat, const char *fmt, va_lis
 
         // (signed) decimal
         case 'd':
-            num = getint(&ap, lflag);
+            num = getint(ap, lflag);
             if ((long long)num < 0) {
                 putch('-', putdat);
                 num = -(long long)num;
@@ -227,13 +228,13 @@ void vprintfmt(void (*putch)(int, void *), void *putdat, const char *fmt, va_lis
 
         // unsigned decimal
         case 'u':
-            num = getuint(&ap, lflag);
+            num = getuint(ap, lflag);
             base = 10;
             goto number;
 
         // (unsigned) octal
         case 'o':
-            num = getuint(&ap, lflag);
+            num = getuint(ap, lflag);
             base = 8;
             goto number;
 
@@ -247,7 +248,7 @@ void vprintfmt(void (*putch)(int, void *), void *putdat, const char *fmt, va_lis
 
         // (unsigned) hexadecimal
         case 'x':
-            num = getuint(&ap, lflag);
+            num = getuint(ap, lflag);
             base = 16;
         number:
             printnum(putch, putdat, num, base, width, padc);
