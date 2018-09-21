@@ -64,7 +64,7 @@ set_mem_entry:                                      # 设置PTE页表中的512�
 
 .code64                                             # 64位长模式代码
 protected_code_seg:
-    movw $PROTECTED_MODE_DSEG, %ax                  # 设置64位长模式下的段选择子，使用相同的段（实际上是否为相同的段已经没有区别）
+    movw $PROTECTED_MODE_DSEG, %ax                  # 设置64位长模式下的段选择子，使用相同的段
     movw %ax, %ds                                   # -> DS: Data Segment
     movw %ax, %es                                   # -> ES: Extra Segment
     movw %ax, %fs                                   # -> FS
@@ -77,7 +77,7 @@ protected_code_seg:
 spin:
     jmp spin                                        # 正常情况下不会执行到这里
 
-.p2align 4                                          # 对GDT进行8字节对齐，提高性能
+.p2align 3                                          # 对GDT进行8字节对齐，提高性能
 gdt:
     SEG_EMPTY                                       # GDT第一个要为空
     SEG_CODE                                        # BootLoader和kernel的代码段
