@@ -1,7 +1,7 @@
 #include <defs.h>
 #include <stdio.h>
 #include <string.h>
-#include <x86.h>
+#include <asm.h>
 
 /* *
  * printnum - print a number (base <= 16) in reverse order
@@ -37,14 +37,15 @@ printnum(void (*putch)(int, void *), void *putdat,
  * @ap:            a varargs list pointer
  * @lflag:        determines the size of the vararg that @ap points to
  * */
+// AMD64的va_list实现有所变化，从指针变成了数组，因此直接传参即可，无需传地址
 static unsigned long long
-getuint(va_list *ap, int lflag) {
+getuint(va_list ap, int lflag) {
     if (lflag >= 2) {
-        return va_arg(*ap, unsigned long long);
+        return va_arg(ap, unsigned long long);
     } else if (lflag) {
-        return va_arg(*ap, unsigned long);
+        return va_arg(ap, unsigned long);
     } else {
-        return va_arg(*ap, unsigned int);
+        return va_arg(ap, unsigned int);
     }
 }
 
@@ -53,7 +54,7 @@ getuint(va_list *ap, int lflag) {
  * @ap:            a varargs list pointer
  * @lflag:        determines the size of the vararg that @ap points to
  * */
-// AMD64的va_list实现有所变化，从指针变成了数组，因此直接传参即可，无需传地址
+// 同上
 static long long
 getint(va_list ap, int lflag) {
     if (lflag >= 2) {
@@ -92,7 +93,7 @@ void printfmt(void (*putch)(int, void *), void *putdat, const char *fmt, ...) {
  * */
 void vprintfmt(void (*putch)(int, void *), void *putdat, const char *fmt, va_list ap) {
     register const char *p;
-    register int ch, err;
+    register int ch;
     unsigned long long num;
     int base, width, precision, lflag, altflag;
 

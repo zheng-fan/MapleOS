@@ -1,30 +1,7 @@
-#ifndef __LIBS_X86_H__
-#define __LIBS_X86_H__
-
-#include <defs.h>
-
-/* Pseudo-descriptors used for LGDT, LLDT(not used) and LIDT instructions. */
-struct pseudodesc {
-    uint16_t pd_lim;  // Limit
-    uint64_t pd_base; // Base address
-} __attribute__((packed));
-
-#define read_reg32(reg) ({             \
-    uint32_t reg;                      \
-    asm volatile("movl %%" #reg ", %0" \
-                 : "=r"(reg));         \
-    reg;                               \
-})
-
-#define read_reg64(reg) ({             \
-    uint64_t reg;                      \
-    asm volatile("movq %%" #reg ", %0" \
-                 : "=r"(reg));         \
-    reg;                               \
-})
+#ifndef __LIBS_ASM_H__
+#define __LIBS_ASM_H__
 
 // 对指令的封装
-
 static __always_inline uint8_t
 inb(uint16_t port) {
     uint8_t data;
@@ -55,7 +32,7 @@ outw(uint16_t port, uint16_t data) {
 }
 
 static __always_inline void
-lidt(struct pseudodesc *pd) {
+lidt(void *pd) {
     asm volatile("lidt (%0)" ::"r"(pd));
 }
 
@@ -74,4 +51,4 @@ ltr(uint16_t sel) {
     asm volatile("ltr %0" ::"r"(sel));
 }
 
-#endif /* !__LIBS_X86_H__ */
+#endif /* !__LIBS_ASM_H__ */

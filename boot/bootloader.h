@@ -1,5 +1,5 @@
-#ifndef __BOOT_LOADER_H__
-#define __BOOT_LOADER_H__
+#ifndef __BOOT_BOOTLOADER_H__
+#define __BOOT_BOOTLOADER_H__
 
 /* Assembler macros to create x86 segments */
 
@@ -15,4 +15,4 @@
     .long 0;     \
     .byte 0, 0b10010010, 0, 0;
 
-#endif /* !__BOOT_LOADER_H__ */
+#endif /* !__BOOT_BOOTLOADER_H__ */

@@ -1,6 +1,6 @@
 #include <defs.h>
 #include <elf.h>
-#include <x86.h>
+#include <asm.h>
 
 uint32_t SECTSIZE = 512;
 struct elfhdr *ELFHDR = ((struct elfhdr *)0x10000); //ELF HEADER的临时存放地址

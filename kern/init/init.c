@@ -1,4 +1,5 @@
 #include <console.h>
+#include <debug.h>
 #include <defs.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,6 +13,7 @@ void kern_init(void) {
     printf("Hello, World!\n");
     printf("edata=%p, end=%p, end-edata=%p\n", edata, end, end - edata);
     printf("edata=%lld, end=%lld, end-edata=%lld\n", edata, end, end - edata);
+    printf("cs=0x%04x, rsp=0x%llx, eax=0x%x\n", (unsigned)read_reg16(cs), read_reg64(rsp), read_reg32(eax));
 
     while (1)
         /* do nothing */;

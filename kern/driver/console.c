@@ -1,7 +1,7 @@
 #include <defs.h>
 #include <stdio.h>
 #include <string.h>
-#include <x86.h>
+#include <asm.h>
 
 /* stupid I/O delay routine necessitated by historical PC design flaws */
 static void

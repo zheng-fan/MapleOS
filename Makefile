@@ -46,6 +46,8 @@ $(MapleOS):
 	$(CC) -g -Wall -O2 -Itools/ tools/sign.c -o $(BINDIR)/sign
 	$(CC) -g -Wall -O2 -Itools/ tools/vector.c -o $(BINDIR)/vector
 
+	@echo "============= Tools Compilation Completed ============="
+
 	$(BINDIR)/vector > kern/trap/vector.S
 
 	$(CC) $(CFLAGS) -Ilibs/ -Ikern/driver/ -c kern/driver/console.c -o $(OBJDIR)/kern/driver/console.o
@@ -58,20 +60,31 @@ $(MapleOS):
 	$(CC) $(CFLAGS) -Ilibs/ -c libs/string.c -o $(OBJDIR)/libs/string.o
 	$(LD) $(LDFLAGS) -z max-page-size=0x1000 -T tools/kernel.ld -o $(BINDIR)/kernel $(OBJDIR)/kern/driver/console.o $(OBJDIR)/kern/init/init.o $(OBJDIR)/kern/libs/stdio.o $(OBJDIR)/kern/trap/vector.o $(OBJDIR)/kern/trap/trapentry.o $(OBJDIR)/libs/printfmt.o $(OBJDIR)/libs/string.o
 
+	@echo "============= Kernel Compilation & Link Completed ============="
+
 	$(CC) $(CFLAGS) -Ilibs/ -Iboot/ -Os -c boot/bootmbr.S -o $(OBJDIR)/boot/bootmbr.o
 	$(CC) $(CFLAGS) -Ilibs/ -Iboot/ -Os -c boot/bootloader.S -o $(OBJDIR)/boot/bootloader.o
 	$(CC) $(CFLAGS) -Ilibs/ -Iboot/ -Os -c boot/bootmain.c -o $(OBJDIR)/boot/bootmain.o
 
 	$(LD) --oformat=elf64-x86-64 $(LDFLAGS) -N -e start -Ttext 0x7C00 $(OBJDIR)/boot/bootmbr.o -o $(OBJDIR)/bootmbr.o
 	$(LD) --oformat=elf64-x86-64 $(LDFLAGS) -N -e start -Ttext 0x6000 $(OBJDIR)/boot/bootloader.o $(OBJDIR)/boot/bootmain.o -o $(OBJDIR)/bootloader.o
+
+	@echo "============= BootLoader Compilation & Link Completed ============="
+
 	$(OBJCOPY) -S -O binary $(OBJDIR)/bootmbr.o $(OBJDIR)/bootmbr.out
 	$(OBJCOPY) -S -O binary $(OBJDIR)/bootloader.o $(OBJDIR)/bootloader
+	
 	$(BINDIR)/sign -bootmbr $(OBJDIR)/bootmbr.out $(OBJDIR)/bootmbr
 	$(BINDIR)/sign -bootloader $(OBJDIR)/bootloader
+
+	@echo "============= BootLoader Generated & Checked ============="
+
 	$(DD) if=/dev/zero of=$(BINDIR)/$(MapleOS) count=10000
 	$(DD) if=$(OBJDIR)/bootmbr of=$(BINDIR)/$(MapleOS) conv=notrunc
 	$(DD) if=$(OBJDIR)/bootloader of=$(BINDIR)/$(MapleOS) seek=1 conv=notrunc
 	$(DD) if=$(BINDIR)/kernel of=$(BINDIR)/$(MapleOS) seek=8 conv=notrunc
+
+	@echo "============= OS IMG Generated ============="
 
 qemu: $(MapleOS)
 	$(QEMU) -drive file=$(BINDIR)/$<,index=0,if=ide,media=disk,format=raw $(PORTFLAGS)
