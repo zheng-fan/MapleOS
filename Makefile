@@ -38,23 +38,29 @@ $(MapleOS):
 	$(MKDIR) $(OBJDIR)/kern/driver/
 	$(MKDIR) $(OBJDIR)/kern/init/
 	$(MKDIR) $(OBJDIR)/kern/libs/
+	$(MKDIR) $(OBJDIR)/kern/trap/
 	$(MKDIR) $(OBJDIR)/boot/
 	$(MKDIR) $(OBJDIR)/libs/
 	$(MKDIR) $(BINDIR)
 
+	$(CC) -g -Wall -O2 -Itools/ tools/sign.c -o $(BINDIR)/sign
+	$(CC) -g -Wall -O2 -Itools/ tools/vector.c -o $(BINDIR)/vector
+
+	$(BINDIR)/vector > kern/trap/vector.S
+
 	$(CC) $(CFLAGS) -Ilibs/ -Ikern/driver/ -c kern/driver/console.c -o $(OBJDIR)/kern/driver/console.o
 	$(CC) $(CFLAGS) -Ilibs/ -Ikern/driver/ -c kern/init/init.c -o $(OBJDIR)/kern/init/init.o
 	$(CC) $(CFLAGS) -Ilibs/ -Ikern/driver/ -c kern/libs/stdio.c -o $(OBJDIR)/kern/libs/stdio.o
+	$(CC) $(CFLAGS) -Ilibs/ -Ikern/trap/ -c kern/trap/vector.S -o $(OBJDIR)/kern/trap/vector.o
+	$(CC) $(CFLAGS) -Ilibs/ -Ikern/trap/ -c kern/trap/trapentry.S -o $(OBJDIR)/kern/trap/trapentry.o
 
 	$(CC) $(CFLAGS) -Ilibs/ -c libs/printfmt.c -o $(OBJDIR)/libs/printfmt.o
 	$(CC) $(CFLAGS) -Ilibs/ -c libs/string.c -o $(OBJDIR)/libs/string.o
-	$(LD) $(LDFLAGS) -z max-page-size=0x1000 -T tools/kernel.ld -o $(BINDIR)/kernel $(OBJDIR)/kern/driver/console.o $(OBJDIR)/kern/init/init.o $(OBJDIR)/kern/libs/stdio.o $(OBJDIR)/libs/printfmt.o $(OBJDIR)/libs/string.o
+	$(LD) $(LDFLAGS) -z max-page-size=0x1000 -T tools/kernel.ld -o $(BINDIR)/kernel $(OBJDIR)/kern/driver/console.o $(OBJDIR)/kern/init/init.o $(OBJDIR)/kern/libs/stdio.o $(OBJDIR)/kern/trap/vector.o $(OBJDIR)/kern/trap/trapentry.o $(OBJDIR)/libs/printfmt.o $(OBJDIR)/libs/string.o
 
 	$(CC) $(CFLAGS) -Ilibs/ -Iboot/ -Os -c boot/bootmbr.S -o $(OBJDIR)/boot/bootmbr.o
 	$(CC) $(CFLAGS) -Ilibs/ -Iboot/ -Os -c boot/bootloader.S -o $(OBJDIR)/boot/bootloader.o
 	$(CC) $(CFLAGS) -Ilibs/ -Iboot/ -Os -c boot/bootmain.c -o $(OBJDIR)/boot/bootmain.o
-
-	$(CC) -g -Wall -O2 -Itools/ tools/sign.c -o $(BINDIR)/sign
 
 	$(LD) --oformat=elf64-x86-64 $(LDFLAGS) -N -e start -Ttext 0x7C00 $(OBJDIR)/boot/bootmbr.o -o $(OBJDIR)/bootmbr.o
 	$(LD) --oformat=elf64-x86-64 $(LDFLAGS) -N -e start -Ttext 0x6000 $(OBJDIR)/boot/bootloader.o $(OBJDIR)/boot/bootmain.o -o $(OBJDIR)/bootloader.o
@@ -89,3 +95,4 @@ all: $(MapleOS)
 
 clean:
 	$(RM) -r $(OBJDIR) $(BINDIR)
+	$(RM) kern/trap/vector.S
