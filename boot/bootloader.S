@@ -24,22 +24,22 @@ set_A20.2:
     outb %al, $0x60                                 # 0xdf = 11011111, means set P2's A20 bit(the 1 bit) to 1
 
     movl $0x1000, %edi
-    movl %edi, %cr3                                 # 设置PML4E页表的地址
+    movl %edi, %cr3                                 # 设置PML4页表的地址
     xorl %eax, %eax
     movl $4096, %ecx                                # 清空4级页表
     rep stosl
     movl %cr3, %edi                                 # stosl指令会修改edi，所以要改回去
 
-    movl $0x2000 | 3, (%edi)                        # 设置PDPE页表的地址，3代表读写权限
+    movl $0x2000 | 3, (%edi)                        # 设置PDP页表的地址，3代表读写权限
     addl $0x1000, %edi
-    movl $0x3000 | 3, (%edi)                        # 设置PDE页表的地址
+    movl $0x3000 | 3, (%edi)                        # 设置PD页表的地址
     addl $0x1000, %edi
-    movl $0x4000 | 3, (%edi)                        # 设置PTE页表的地址（最后一级页表）
+    movl $0x4000 | 3, (%edi)                        # 设置PT页表的地址（最后一级页表）
     addl $0x1000, %edi
 
     movl $3, %ebx                                   # 3代表读写权限
     movl $512, %ecx
-set_mem_entry:                                      # 设置PTE页表中的512个entry，从0开始，共计2M的空间
+set_mem_entry:                                      # 设置PT页表中的512个entry，从0开始，共计2M的空间
     movl %ebx, (%edi)                               # 此时edi=0x4000
     addl $0x1000, %ebx
     addl $8, %edi                                   # 前面已经清空过了，所以高32位无需再处理
@@ -51,12 +51,12 @@ set_mem_entry:                                      # 设置PTE页表中的512�
 
     movl $0xC0000080, %ecx
     rdmsr
-    orl $1<<8, %eax                                  # EFER.LME=1 开启长模式
+    orl $1<<8, %eax                                 # EFER.LME=1 开启长模式
     wrmsr
 
     movl %cr0, %eax
-    orl $1<<31|1, %eax                               # CR0.PG=1 CR0.PE=1
-    movl %eax, %cr0                                  # 开启分页，开启保护模式
+    orl $1<<31|1, %eax                              # CR0.PG=1 CR0.PE=1
+    movl %eax, %cr0                                 # 开启分页，开启保护模式
 
     lgdt gdt_info                                   # 加载GDT
 
@@ -79,7 +79,7 @@ spin:
 
 .p2align 3                                          # 对GDT进行8字节对齐，提高性能
 gdt:
-    SEG_EMPTY                                       # GDT第一个要为空
+    SEG_NULL                                        # GDT第一个要为空
     SEG_CODE                                        # BootLoader和kernel的代码段
     SEG_DATA                                        # BootLoader和kernel的数据段
 

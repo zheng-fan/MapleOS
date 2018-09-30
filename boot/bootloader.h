@@ -4,7 +4,7 @@
 /* Assembler macros to create x86 segments */
 
 /* Normal segment */
-#define SEG_EMPTY .quad 0;
+#define SEG_NULL .quad 0;
 
 //由于小端字节序的原因，不可以写成一个long或quad（除非反过来写）
 #define SEG_CODE \

@@ -8,7 +8,7 @@ int main(void) {
     for (i = 0; i < 256; i++) {
         printf(".globl vector%d\n", i);
         printf("vector%d:\n", i);
-        // 为了保持一致性，给没有返回值的中断占位
+        // 对于没有返回值的中断，手动进行占位，以保持栈结构的一致性
         // 9、15、20~28、31是保留的中断
         if ((i <= 7 || i >= 16) && i != 17) {
             printf("  pushq $0\n");

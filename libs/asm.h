@@ -32,11 +32,6 @@ outw(uint16_t port, uint16_t data) {
 }
 
 static __always_inline void
-lidt(void *pd) {
-    asm volatile("lidt (%0)" ::"r"(pd));
-}
-
-static __always_inline void
 sti(void) {
     asm volatile("sti");
 }
@@ -47,8 +42,23 @@ cli(void) {
 }
 
 static __always_inline void
+lidt(void *pd) {
+    asm volatile("lidt (%0)" ::"r"(pd));
+}
+
+static __always_inline void
 ltr(uint16_t sel) {
     asm volatile("ltr %0" ::"r"(sel));
+}
+
+// 对指令的功能封装
+void intr_enable(void) {
+    sti();
+}
+
+/* intr_disable - disable irq interrupt */
+void intr_disable(void) {
+    cli();
 }
 
 #endif /* !__LIBS_ASM_H__ */

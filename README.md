@@ -76,7 +76,7 @@ MapleOS/
 ## 参考资料
 
 * [清华大学操作系统课程](http://www.xuetangx.com/courses/course-v1:TsinghuaX+30240243X+sp/about)、[ucore](https://github.com/chyyuu/ucore_os_lab)、[ucore os docs](https://chyyuu.gitbooks.io/ucore_os_docs/)、[simple os book](https://chyyuu.gitbooks.io/simple_os_book/)
-* [AMD64 Architecture Programmer’s Manual](https://search.amd.com/zh-cn/Pages/results-all.aspx?k=AMD64+Architecture+Programmer%E2%80%99s+Manual) Volume 2: System Programming
+* [AMD64 Architecture Programmer’s Manual](https://search.amd.com/zh-cn/Pages/results-all.aspx?k=AMD64+Architecture+Programmer%E2%80%99s+Manual) Volume 2: System Programming or [《64位微处理器系统编程》](https://books.google.com/books?id=_jM0akapIrkC&printsec=frontcover&hl=zh-CN#v=onepage&q&f=false)
 * [OSDev Wiki](https://wiki.osdev.org/Main_Page)
 * [x86 and amd64 instruction reference](https://www.felixcloutier.com/x86/) or [Intel® 64 and IA-32 Architectures Software Developer Manuals](https://software.intel.com/en-us/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4)
 * [《汇编语言》](https://www.amazon.cn/gp/product/B00EYSPGYE/)
