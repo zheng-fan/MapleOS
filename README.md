@@ -28,7 +28,7 @@ sudo apt install qemu-system
 编写操作系统非一日之功。目前，我已完成如下功能：
 
 * 在MBR中加载BootLoader到内存中
-* 在BootLoader中开启PML4E->PDPE->PDE->PTE的四级分页，并做了2M地址空间的内存映射
+* 在BootLoader中开启PML4->PDP->PD->PT的四级分页，并做了2M地址空间的内存映射
 * 在BootLoader中进入长模式并加载操作系统内核到内存中
 * 在内核中实现串口与CGA的写操作
 * 实现stdio.h与string.h的部分函数
@@ -52,17 +52,21 @@ MapleOS/
 │   │   └── console.h
 │   ├── init
 │   │   └── init.c（内核入口）
-│   └── libs
-│       └── stdio.c（stdio的部分函数实现）
+│   ├── libs
+│   │   ├── segdesc.h（段描述符表信息与段描述符）
+│   │   └── stdio.c（stdio的部分函数实现）
+│   └── trap
+│       └── trapentry.S（中断统一处理程序）
 ├── libs
+│   ├── asm.h（对指令的封装）
+│   ├── debug.h（用于调试）
 │   ├── defs.h（通用定义）
 │   ├── elf.h（ELF文件格式信息）
 │   ├── printfmt.c（printf的主要功能实现）
 │   ├── stdarg.h（变长参数表的宏定义）
 │   ├── stdio.h
 │   ├── string.c（string的部分函数实现）
-│   ├── string.h
-│   └── x86.h（对机器指令的封装）
+│   └── string.h
 ├── Makefile
 ├── README.md
 └── tools
@@ -70,7 +74,8 @@ MapleOS/
     ├── bootmbr.gdbinit（用于gdb调试mbr）
     ├── kernel.gdbinit（用于gdb调试内核）
     ├── kernel.ld（内核链接时的配置信息）
-    └── sign.c（检查MBR与BootLoader的大小合法性，并添加MBR结束符）
+    ├── sign.c（检查MBR与BootLoader的大小合法性，并添加MBR结束符）
+    └── vector.c（用于生成做中断跳转处理的汇编代码以及中断服务例程的地址）
 ```
 
 ## 参考资料
@@ -80,3 +85,4 @@ MapleOS/
 * [OSDev Wiki](https://wiki.osdev.org/Main_Page)
 * [x86 and amd64 instruction reference](https://www.felixcloutier.com/x86/) or [Intel® 64 and IA-32 Architectures Software Developer Manuals](https://software.intel.com/en-us/download/intel-64-and-ia-32-architectures-sdm-combined-volumes-1-2a-2b-2c-2d-3a-3b-3c-3d-and-4)
 * [《汇编语言》](https://www.amazon.cn/gp/product/B00EYSPGYE/)
+* [《x86汇编语言：从实模式到保护模式》](https://www.amazon.cn/gp/product/B00AR0ZSVO/)
