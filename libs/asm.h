@@ -52,12 +52,12 @@ ltr(uint16_t sel) {
 }
 
 // 对指令的功能封装
-void intr_enable(void) {
+static void intr_enable(void) {
     sti();
 }
 
 /* intr_disable - disable irq interrupt */
-void intr_disable(void) {
+static void intr_disable(void) {
     cli();
 }
 

@@ -16,7 +16,7 @@ __alltraps:
     # 将trap frame的地址作为参数传递给trap_dispatch函数
     movq %rsp, %rdi
 
-    call trap_dispatch
+    # call trap_dispatch
 
     popq %rsp
 
@@ -33,6 +33,6 @@ __alltraps:
     popq %rax
 
     # 跳过trap number和error code
-    addq $0x10
+    addq $0x10, %rsp
 
     iret

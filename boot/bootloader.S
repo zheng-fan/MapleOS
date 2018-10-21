@@ -1,7 +1,7 @@
 #include <bootloader.h>
 
-.set PROTECTED_MODE_CSEG,        0x8                # 0x8 = 0b01000, index=1, TI=0, RPL=0 内核的代码段在GDT的信息
-.set PROTECTED_MODE_DSEG,        0x10               # 0x8 = 0b10000, index=2, TI=0, RPL=0 内核的数据段在GDT的信息
+.set LONG_CSEG_SELECTOR,        0x8                 # 0x8 = 0b01000, index=1, TI=0, RPL=0 内核的代码段在GDT的信息
+.set LONG_DSEG_SELECTOR,        0x10                # 0x10 = 0b10000, index=2, TI=0, RPL=0 内核的数据段在GDT的信息
 
 .globl start
 start:
@@ -60,11 +60,11 @@ set_mem_entry:                                      # 设置PT页表中的512个
 
     lgdt gdt_info                                   # 加载GDT
 
-    ljmp $PROTECTED_MODE_CSEG, $protected_code_seg  # 进入长模式
+    ljmp $LONG_CSEG_SELECTOR, $long_code_seg_offset # 进入长模式
 
 .code64                                             # 64位长模式代码
-protected_code_seg:
-    movw $PROTECTED_MODE_DSEG, %ax                  # 设置64位长模式下的段选择子，使用相同的段
+long_code_seg_offset:
+    movw $LONG_DSEG_SELECTOR, %ax                   # 设置64位长模式下的段选择子，使用相同的段
     movw %ax, %ds                                   # -> DS: Data Segment
     movw %ax, %es                                   # -> ES: Extra Segment
     movw %ax, %fs                                   # -> FS
